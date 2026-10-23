@@ -1,0 +1,61 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Card from './Card.astro';
+import PageHeader from './PageHeader.astro';
+import { sections, type SectionKey } from '../site';
+import { placeholder } from '../placeholder';
+
+interface Props {
+  section: SectionKey;
+  cat?: string;
+}
+const { section: key, cat } = Astro.props;
+const s = sections[key];
+const cats = s.categories as Record<string, string>;
+const lugares = (
+  await getCollection('lugares', (l) => l.data.section === key && (!cat || l.data.category === cat))
+).sort((a, b) => +b.data.featured - +a.data.featured || a.data.name.localeCompare(b.data.name, 'pt-BR'));
+const title = cat ? `${cats[cat]} em Chapecó` : s.label;
+---
+
+<Base title={title} description={s.intro}>
+  <PageHeader eyebrow={cat ? s.label : 'Explore Chapecó'} title={title} text={s.intro}>
+    <ul class="mt-8 flex flex-wrap gap-2">
+      <li>
+        <a class="chip" href={`/${key}/`} aria-current={!cat ? 'page' : undefined}>
+          Todos
+        </a>
+      </li>
+      {Object.entries(cats).map(([c, label]) => (
+        <li>
+          <a
+            class="chip aria-[current=page]:bg-brand-600 aria-[current=page]:text-white"
+            href={`/categoria/${key}/${c}/`}
+            aria-current={c === cat ? 'page' : undefined}
+          >
+            {label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </PageHeader>
+
+  <section class="wrap pb-20">
+    {lugares.length ? (
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {lugares.map((l) => (
+          <Card
+            href={`/${key}/${l.id}/`}
+            title={l.data.name}
+            image={l.data.image ?? placeholder(l.id)}
+            eyebrow={cats[l.data.category]}
+            text={l.data.summary}
+          />
+        ))}
+      </div>
+    ) : (
+      <p class="rounded-3xl bg-slate-50 p-8 text-center">Ainda não há locais cadastrados nesta categoria.</p>
+    )}
+  </section>
+</Base>

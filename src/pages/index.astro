@@ -1,0 +1,279 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Card from '../components/Card.astro';
+import { sections, eventCategories, dateBR } from '../site';
+import { placeholder } from '../placeholder';
+
+const lugares = await getCollection('lugares');
+const experiencias = (await getCollection('experiencias')).sort((a, b) => a.data.order - b.data.order);
+const now = new Date();
+const eventos = (await getCollection('eventos'))
+  .filter((e) => e.data.date >= now)
+  .sort((a, b) => +a.data.date - +b.data.date)
+  .slice(0, 3);
+
+const acessos = [
+  { label: 'Hospedagem', href: '/hospedagem/', text: 'Hotéis, pousadas e turismo rural', seed: 'acesso-hospedagem' },
+  { label: 'Gastronomia', href: '/gastronomia/', text: 'Do café colonial ao churrasco', seed: 'acesso-gastronomia' },
+  { label: 'Eventos', href: '/eventos/', text: 'Shows, feiras e festas', seed: 'acesso-eventos' },
+  { label: 'Atrativos', href: '/atrativos/', text: 'Parques, museus e cultura', seed: 'acesso-atrativos' },
+  { label: 'Rotas Turísticas', href: '/experiencias/', text: 'Roteiros rurais e urbanos', seed: 'acesso-rotas' },
+  { label: 'Serviços', href: '/servicos/', text: 'Guias, transporte e apoio', seed: 'acesso-servicos' },
+];
+
+const vitrines = (['hospedagem', 'gastronomia', 'atrativos'] as const).map((key) => ({
+  key,
+  ...sections[key],
+  destaques: lugares.filter((l) => l.data.section === key && l.data.featured).slice(0, 3),
+  cta: {
+    hospedagem: 'Ver todas as hospedagens',
+    gastronomia: 'Explorar a gastronomia',
+    atrativos: 'Ver todos os atrativos',
+  }[key],
+}));
+---
+
+<Base>
+  <!-- Hero -->
+  <section class="relative isolate overflow-hidden bg-brand-950 text-white">
+    <Image
+      src={placeholder('chapeco-hero')}
+      alt=""
+      width={1920}
+
+      widths={[768, 1280, 1920]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+      quality={60}
+      class="absolute inset-0 -z-10 size-full object-cover opacity-50"
+    />
+    <div class="absolute inset-0 -z-10 bg-gradient-to-t from-brand-950 via-brand-950/40 to-transparent"></div>
+    <div class="wrap flex min-h-[85svh] flex-col justify-end py-20">
+      <p class="eyebrow text-sun">Capital do Oeste · Santa Catarina</p>
+      <h1 class="mt-3 max-w-3xl font-display text-5xl font-bold tracking-tight md:text-7xl">Descubra Chapecó</h1>
+      <p class="mt-5 max-w-xl text-lg text-white/85 md:text-xl">
+        Experiências, gastronomia, cultura e eventos em uma cidade que acolhe quem chega.
+      </p>
+
+      <form
+        action="/busca/"
+        method="get"
+        role="search"
+        class="mt-8 flex max-w-xl gap-2 rounded-full bg-white p-1.5 shadow-2xl"
+      >
+        <label for="q" class="sr-only">
+          Pesquisar
+        </label>
+        <input
+          id="q"
+          name="q"
+          type="search"
+          placeholder="Hotel, café colonial, trilha..."
+          class="min-w-0 flex-1 rounded-full px-5 text-slate-900 outline-none placeholder:text-slate-500"
+        />
+        <button class="btn">Pesquisar</button>
+      </form>
+
+      <ul class="mt-6 flex flex-wrap gap-2 text-sm">
+        {acessos.slice(0, 5).map((a) => (
+          <li>
+            <a
+              href={a.href}
+              class="block rounded-full bg-white/10 px-4 py-1.5 font-semibold backdrop-blur hover:bg-white/20"
+            >
+              {a.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <dl class="mt-12 grid max-w-3xl grid-cols-3 gap-6 border-t border-white/20 pt-6">
+        <div>
+          <dt class="text-sm text-white/70">Rotas mapeadas</dt>
+          <dd class="font-display text-2xl font-bold md:text-3xl">4</dd>
+        </div>
+        <div>
+          <dt class="text-sm text-white/70">Clima</dt>
+          <dd class="font-display text-2xl font-bold md:text-3xl">Ameno o ano todo</dd>
+        </div>
+        <div>
+          <dt class="text-sm text-white/70">Do centro</dt>
+          <dd class="font-display text-2xl font-bold md:text-3xl">à zona rural</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- Acessos -->
+  <section id="acessos" class="wrap scroll-mt-20 py-20">
+    <p class="eyebrow">Comece a explorar</p>
+    <h2 class="h2 mt-2">O que você procura em Chapecó?</h2>
+    <ul class="mt-10 grid grid-cols-2 gap-4 md:grid-cols-3">
+      {acessos.map((a) => (
+        <li class="group relative isolate overflow-hidden rounded-3xl">
+          <Image
+            src={placeholder(a.seed)}
+            alt=""
+            width={600}
+            widths={[300, 600]}
+            sizes="(min-width: 768px) 33vw, 50vw"
+            class="aspect-[4/3] size-full object-cover transition duration-500 group-hover:scale-105"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-brand-950/90 to-transparent"></div>
+          <div class="absolute inset-x-0 bottom-0 p-5 text-white">
+            <h3 class="font-display text-lg font-semibold md:text-xl">
+              <a href={a.href} class="after:absolute after:inset-0">
+                {a.label}
+              </a>
+            </h3>
+            <p class="hidden text-sm text-white/80 sm:block">{a.text}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- Eventos -->
+  <section class="bg-brand-50 py-20">
+    <div class="wrap">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p class="eyebrow">Agenda</p>
+          <h2 class="h2 mt-2">Próximos eventos</h2>
+          <p class="mt-3 max-w-xl">
+            Shows, feiras, congressos, competições e festas gastronômicas que movimentam a cidade.
+          </p>
+        </div>
+        <a href="/eventos/" class="btn">
+          Ver calendário completo
+        </a>
+      </div>
+      {eventos.length ? (
+        <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {eventos.map((e) => (
+            <Card
+              href={`/eventos/${e.id}/`}
+              title={e.data.title}
+              image={e.data.image ?? placeholder(e.id)}
+              eyebrow={`${dateBR(e.data.date)} · ${eventCategories[e.data.category]}`}
+              text={e.data.venue}
+            />
+          ))}
+        </div>
+      ) : (
+        <p class="mt-10 rounded-3xl bg-white p-8 text-center">Nenhum evento agendado no momento. Volte em breve!</p>
+      )}
+    </div>
+  </section>
+
+  <!-- Hospedagem, Gastronomia, Atrativos -->
+  {vitrines.map((v, i) => (
+    <section class:list={['py-20', i % 2 === 1 && 'bg-slate-50']}>
+      <div class="wrap">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div class="max-w-2xl">
+            <h2 class="h2">{v.label}</h2>
+            <p class="mt-3 text-lg">{v.intro}</p>
+            <ul class="mt-5 flex flex-wrap gap-2">
+              {Object.entries(v.categories).map(([c, label]) => (
+                <li>
+                  <a class="chip" href={`/categoria/${v.key}/${c}/`}>
+                    {label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <a href={`/${v.key}/`} class="btn">
+            {v.cta}
+          </a>
+        </div>
+        <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {v.destaques.map((l) => (
+            <Card
+              href={`/${v.key}/${l.id}/`}
+              title={l.data.name}
+              image={l.data.image ?? placeholder(l.id)}
+              eyebrow={(v.categories as Record<string, string>)[l.data.category]}
+              text={l.data.summary}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <!-- Experiências -->
+  <section class="bg-brand-950 py-20 text-brand-100">
+    <div class="wrap">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p class="eyebrow text-sun">Experiências</p>
+          <h2 class="h2 mt-2 text-white">Rotas e roteiros para viver a cidade</h2>
+        </div>
+        <a href="/experiencias/" class="btn-ghost text-white">
+          Ver todas as experiências
+        </a>
+      </div>
+      <ul class="mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 [scrollbar-color:var(--color-brand-400)_transparent] [scrollbar-width:thin]">
+        {experiencias.map((x) => (
+          <li class="group relative isolate w-72 shrink-0 snap-start overflow-hidden rounded-3xl">
+            <Image
+              src={x.data.image ?? placeholder(x.id)}
+              alt=""
+              width={400}
+              widths={[300, 600]}
+              sizes="18rem"
+              class="aspect-[4/5] size-full object-cover transition duration-500 group-hover:scale-105"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/30 to-transparent"></div>
+            <div class="absolute inset-x-0 bottom-0 p-6">
+              <h3 class="font-display text-xl font-semibold text-white">
+                <a href={`/experiencias/${x.id}/`} class="after:absolute after:inset-0">
+                  {x.data.title}
+                </a>
+              </h3>
+              <p class="mt-1 line-clamp-2 text-sm text-white/80">{x.data.summary}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Sobre -->
+  <section class="wrap grid items-center gap-12 py-20 lg:grid-cols-2">
+    <div>
+      <p class="eyebrow">Sobre a cidade</p>
+      <h2 class="h2 mt-2">Bem-vindo à Capital do Oeste</h2>
+      <div class="mt-6 space-y-4 text-lg">
+        <p>
+          Chapecó é o principal polo do oeste catarinense: uma cidade jovem, organizada e cheia de energia, que une a
+          força do agronegócio à vida urbana e ao acolhimento do interior.
+        </p>
+        <p>
+          Fundada em 1917, a cidade cresceu com imigrantes italianos, alemães e caboclos, e essa mistura aparece na
+          mesa, nas festas e no jeito de receber.
+        </p>
+        <p>
+          Com clima ameno, parques, museus e roteiros rurais a poucos minutos do centro, Chapecó é destino para
+          negócios, lazer e descanso.
+        </p>
+      </div>
+      <a href="/sobre-chapeco/" class="btn mt-8">
+        Nossa história
+      </a>
+    </div>
+    <Image
+      src={placeholder('chapeco-sobre')}
+      alt=""
+      width={800}
+      widths={[400, 800, 1200]}
+      sizes="(min-width: 1024px) 50vw, 100vw"
+      class="rounded-3xl object-cover shadow-xl"
+    />
+  </section>
+</Base>

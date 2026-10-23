@@ -1,0 +1,55 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Card from '../../components/Card.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import { eventCategories, dateBR } from '../../site';
+import { placeholder } from '../../placeholder';
+
+// ponytail: "upcoming" is evaluated at build time; schedule a daily rebuild (Vercel cron/deploy hook) so past events drop off.
+const now = new Date();
+const eventos = (await getCollection('eventos'))
+  .filter((e) => e.data.date >= now)
+  .sort((a, b) => +a.data.date - +b.data.date);
+const grupos = Object.entries(eventCategories)
+  .map(([key, label]) => ({ key, label, items: eventos.filter((e) => e.data.category === key) }))
+  .filter((g) => g.items.length);
+const description = 'Shows, feiras, congressos, competições e festas gastronômicas em Chapecó.';
+---
+
+<Base title="Eventos" description={description}>
+  <PageHeader eyebrow="Agenda" title="Eventos em Chapecó" text={description}>
+    <ul class="mt-8 flex flex-wrap gap-2">
+      {grupos.map((g) => (
+        <li>
+          <a class="chip" href={`#${g.key}`}>
+            {g.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </PageHeader>
+
+  <div id="calendario" class="wrap space-y-16 pb-20">
+    {grupos.length ? (
+      grupos.map((g) => (
+        <section id={g.key} class="scroll-mt-24">
+          <h2 class="h2 text-2xl md:text-3xl">{g.label}</h2>
+          <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {g.items.map((e) => (
+              <Card
+                href={`/eventos/${e.id}/`}
+                title={e.data.title}
+                image={e.data.image ?? placeholder(e.id)}
+                eyebrow={dateBR(e.data.date)}
+                text={`${e.data.venue}. ${e.data.summary}`}
+              />
+            ))}
+          </div>
+        </section>
+      ))
+    ) : (
+      <p class="rounded-3xl bg-slate-50 p-8 text-center">Nenhum evento agendado no momento. Volte em breve!</p>
+    )}
+  </div>
+</Base>

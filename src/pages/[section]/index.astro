@@ -1,0 +1,10 @@
+---
+import Listing from '../../components/Listing.astro';
+import { sectionKeys } from '../../site';
+
+export function getStaticPaths() {
+  return sectionKeys.map((section) => ({ params: { section } }));
+}
+---
+
+<Listing section={Astro.params.section} />

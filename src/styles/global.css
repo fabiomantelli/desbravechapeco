@@ -1,0 +1,106 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/mulish/wght.css';
+@import '@fontsource/poppins/600.css';
+@import '@fontsource/poppins/700.css';
+
+@theme {
+  --font-sans: 'Mulish Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+  --color-brand-50: #eef1ff;
+  --color-brand-100: #dfe4ff;
+  --color-brand-400: #5d78ff;
+  --color-brand-600: #2f47c9;
+  --color-brand-700: #2639a3;
+  --color-brand-950: #0e1438;
+  --color-sun: #ffb627;
+}
+
+/* Native cross-page transitions: no JS router needed. */
+@view-transition {
+  navigation: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+:focus-visible {
+  outline: 3px solid var(--color-sun);
+  outline-offset: 2px;
+}
+
+/* Mobile menu is a native popover; on desktop it is just an inline nav. */
+@media (width >= 64rem) {
+  #menu[popover] {
+    display: flex;
+    position: static;
+    inset: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    overflow: visible;
+    width: auto;
+    height: auto;
+  }
+  #menu .sub {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: none;
+  }
+  #menu li:hover > .sub,
+  #menu li:focus-within > .sub {
+    display: block;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center gap-2 rounded-full bg-brand-600 px-6 py-3 font-display font-semibold text-white transition hover:bg-brand-700;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 rounded-full border border-current px-6 py-3 font-display font-semibold transition hover:bg-white/10;
+  }
+  .chip {
+    @apply inline-block rounded-full border border-brand-100 bg-brand-50 px-4 py-1.5 text-sm font-semibold text-brand-700 transition hover:border-brand-400;
+  }
+  .eyebrow {
+    @apply font-display text-sm font-semibold uppercase tracking-widest text-brand-600;
+  }
+  .h2 {
+    @apply font-display text-3xl font-bold tracking-tight text-brand-950 md:text-4xl;
+  }
+  .wrap {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+}
+
+/* Markdown bodies */
+.prose-content :where(h2) {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-brand-950);
+  margin-top: 2rem;
+}
+.prose-content :where(ul) {
+  list-style: disc;
+  padding-left: 1.5rem;
+}
+.prose-content :where(a) {
+  color: var(--color-brand-700);
+  text-decoration: underline;
+}

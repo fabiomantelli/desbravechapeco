@@ -1,0 +1,99 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+
+const topicos = [
+  { id: 'historia', label: 'História' },
+  { id: 'cultura', label: 'Cultura' },
+  { id: 'economia', label: 'Economia' },
+  { id: 'como-chegar', label: 'Como chegar' },
+  { id: 'informacoes-uteis', label: 'Informações úteis' },
+];
+---
+
+<Base
+  title="Sobre Chapecó"
+  description="História, cultura, economia e dicas práticas para visitar Chapecó, a Capital do Oeste catarinense."
+>
+  <PageHeader
+    eyebrow="Sobre Chapecó"
+    title="Bem-vindo à Capital do Oeste"
+    text="Uma cidade jovem, acolhedora e cheia de energia no coração do oeste de Santa Catarina."
+  >
+    <ul class="mt-8 flex flex-wrap gap-2">
+      {topicos.map((t) => (
+        <li>
+          <a class="chip" href={`#${t.id}`}>
+            {t.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </PageHeader>
+
+  <div class="wrap prose-content max-w-3xl space-y-16 pb-20 text-lg" data-pagefind-body>
+    <section id="historia" class="scroll-mt-24 space-y-4">
+      <h2 class="h2">História</h2>
+      <p>
+        Chapecó foi criada como município em 25 de agosto de 1917, após a resolução da disputa territorial do
+        Contestado. A colonização ganhou força com famílias de origem italiana e alemã vindas do Rio Grande do Sul, que
+        se somaram aos povos indígenas e caboclos que já viviam na região.
+      </p>
+      <p>
+        O Monumento O Desbravador, no centro da cidade, homenageia esses pioneiros e é um dos símbolos mais fotografados
+        de Chapecó.
+      </p>
+    </section>
+
+    <section id="cultura" class="scroll-mt-24 space-y-4">
+      <h2 class="h2">Cultura</h2>
+      <p>
+        A mistura de origens aparece na mesa farta do café colonial, no churrasco, nas festas de comunidade e no
+        tradicionalismo gaúcho. Museus, teatros e espaços culturais completam a agenda, e o futebol tem lugar especial
+        no coração da cidade com a Chapecoense e a Arena Condá.
+      </p>
+    </section>
+
+    <section id="economia" class="scroll-mt-24 space-y-4">
+      <h2 class="h2">Economia</h2>
+      <p>
+        Chapecó é um dos maiores polos agroindustriais do Brasil, referência na produção de carnes e alimentos. A força
+        do agronegócio impulsiona comércio, serviços, tecnologia e o turismo de negócios, com feiras e congressos ao
+        longo do ano.
+      </p>
+    </section>
+
+    <section id="como-chegar" class="scroll-mt-24 space-y-4">
+      <h2 class="h2">Como chegar</h2>
+      <ul class="list-disc space-y-2 pl-6">
+        <li>
+          <strong>Avião:</strong> Aeroporto Serafin Enoss Bertaso (XAP), com voos regulares para capitais e grandes
+          centros.
+        </li>
+        <li>
+          <strong>Carro:</strong> acesso pela BR-282 e por rodovias estaduais que ligam a cidade ao Paraná e ao Rio
+          Grande do Sul.
+        </li>
+        <li>
+          <strong>Ônibus:</strong> linhas intermunicipais e interestaduais chegam à rodoviária da cidade.
+        </li>
+      </ul>
+    </section>
+
+    <section id="informacoes-uteis" class="scroll-mt-24 space-y-4">
+      <h2 class="h2">Informações úteis</h2>
+      <ul class="list-disc space-y-2 pl-6">
+        <li>
+          <strong>Clima:</strong> subtropical, com verões agradáveis e invernos frios. Leve um agasalho entre maio e
+          setembro.
+        </li>
+        <li>
+          <strong>Emergências:</strong> SAMU 192 · Bombeiros 193 · Polícia Militar 190.
+        </li>
+        <li>
+          <strong>Fuso horário:</strong> horário de Brasília (UTC−3).
+        </li>
+      </ul>
+    </section>
+  </div>
+</Base>
